@@ -24,7 +24,7 @@ public:
 	void addParticles(int amount);
 	void removeParticles(int amount);
 	
-	void applyForce(float zoneRadiusSquared);
+	void applyForce(float zoneRadiusSquared, float separationThresh, float alignmentThresh);
 	
 private:
 	std::list<Particle> m_particles;

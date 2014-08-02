@@ -23,6 +23,7 @@ public:
 	void draw();
 	bool isDead();
 	Vec2f pos() { return m_loc; }
+	Vec2f vel() { return m_vel; }
 	void addAcc(const Vec2f &acc);
 	
 	void pullToCenter(const Vec2f &center);

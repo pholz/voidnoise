@@ -9,7 +9,7 @@
 #include "ParticleSystem.h"
 #include "cinder/Rand.h"
 
-#define NUM_PARTICLES 300
+#define NUM_PARTICLES 1000
 
 using namespace ci;
 
@@ -18,7 +18,7 @@ ParticleSystem::ParticleSystem()
 	
 }
 
-void ParticleSystem::applyForce(float zoneRadiusSquared)
+void ParticleSystem::applyForce(float zoneRadiusSquared, float separationThresh, float alignmentThresh)
 {
 	for (auto p1 = m_particles.begin(); p1 != m_particles.end(); p1++)
 	{
@@ -29,17 +29,40 @@ void ParticleSystem::applyForce(float zoneRadiusSquared)
 			Vec2f dir = p1->pos() - p2->pos();
 			float distSquared = dir.lengthSquared();
 			
-			if (distSquared <= 10)
+			if (distSquared <= 1)
 			{
 				continue;
 			}
 			
 			if (distSquared <= zoneRadiusSquared)
 			{
-				float F = (zoneRadiusSquared / distSquared - 1.0f) * 0.01f;
-				dir = dir.normalized() * F;
-				p1->addAcc(dir);
-				p2->addAcc(-dir);
+				float ratio = distSquared / zoneRadiusSquared;
+				
+				if (ratio < separationThresh) // separate
+				{
+					float F = (separationThresh / ratio - 1.0f) * 0.01f;
+					dir = dir.normalized() * F;
+					p1->addAcc(dir);
+					p2->addAcc(-dir);
+				}
+				else if (ratio < alignmentThresh)
+				{
+					float threshDelta = alignmentThresh - separationThresh;
+					float adjustedRatio = (ratio - separationThresh) / threshDelta;
+					float F = (0.5f - cos(adjustedRatio * M_PI * 2.0f) * 0.5f + 0.5f) * 0.03f;
+					p1->addAcc(p2->vel().normalized() * F);
+					p2->addAcc(p1->vel().normalized() * F);
+				}
+				else // attract
+				{
+					float threshDelta = 1.0f - alignmentThresh;
+					float adjustedRatio = (ratio - alignmentThresh) / threshDelta;
+					float F = (1.0 - (cos(adjustedRatio * M_PI * 2.0f) * -0.5f + 0.5f)) * 0.01f;
+					dir = dir.normalized() * F;
+					p1->addAcc(-dir);
+					p2->addAcc(dir);
+				}
+				
 			}
 		}
 	}

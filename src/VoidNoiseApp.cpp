@@ -25,6 +25,8 @@ class VoidNoiseApp : public AppNative {
 	ParticleSystem m_particleSystem;
 	
 	float m_pSysZoneRadiusSq;
+	float m_pSysSeparationThresh;
+	float m_pSysAlignmentThresh;
 	
 };
 
@@ -35,11 +37,15 @@ void VoidNoiseApp::setup()
 	m_center = Vec3f::zero();
 	m_up = Vec3f::yAxis();
 	m_pSysZoneRadiusSq = 450.0;
+	m_pSysSeparationThresh = 0.4;
+	m_pSysAlignmentThresh = 0.65;
 	
 	m_params = params::InterfaceGl::create(getWindow(), "Flocking", Vec2i(225, 200));
 	m_params->addParam("Scene Rotation", &m_sceneRotation);
 	m_params->addParam("Eye Distance", &m_camDistance, "min=50.0 max=1000.0 step=50.0 keyIncr=s keyDecr=w" );
 	m_params->addParam("Zone Radius Sq", &m_pSysZoneRadiusSq);
+	m_params->addParam("Separation Thresh", &m_pSysSeparationThresh);
+	m_params->addParam("Alignment Thresh", &m_pSysAlignmentThresh);
 	
 	m_particleSystem.addParticles(50);
 
@@ -54,7 +60,7 @@ void VoidNoiseApp::update()
 	m_eye = Vec3f(.0f, .0f, m_camDistance);
 	
 	m_particleSystem.update();
-	m_particleSystem.applyForce(m_pSysZoneRadiusSq);
+	m_particleSystem.applyForce(m_pSysZoneRadiusSq, m_pSysSeparationThresh, m_pSysAlignmentThresh);
 }
 
 void VoidNoiseApp::draw()

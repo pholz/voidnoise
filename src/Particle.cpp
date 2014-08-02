@@ -14,7 +14,7 @@ using namespace ci::app;
 
 Particle::Particle(const Vec2f& loc) :
 	m_isDead(false),
-	m_lifespan(Rand::randFloat(100.0, 500.0))
+	m_lifespan(Rand::randFloat(2000.0, 4000.0))
 {
 	m_loc = loc;
 	m_vel = Rand::randVec2f() * Rand::randFloat();
@@ -37,17 +37,22 @@ bool Particle::isDead()
 
 void Particle::update()
 {
+
+	
 	pullToCenter(Vec2f(0.0, 0.0));
 	m_vel += m_acc;
-	m_loc += m_vel;
-	m_vel *= m_decay;
 	
-	static const float maxSpeedSq = .1;
+	static const float maxSpeedSq = .7;
 	float velLengthSqrd = m_vel.lengthSquared();
 	if( velLengthSqrd > maxSpeedSq) {
 		m_vel.normalize();
 		m_vel *= maxSpeedSq;
 	}
+	
+	m_loc += m_vel;
+	m_vel *= m_decay;
+	
+
 	
 	m_age += 1.0;
 	if (m_age >= m_lifespan)
@@ -58,8 +63,8 @@ void Particle::update()
 
 void Particle::draw()
 {
-	gl::color(1.0f, 1.0f, 1.0f, 1.0f-m_age/m_lifespan);
-	gl::drawSolidCircle(m_loc, m_radius * m_age/m_lifespan);
+	gl::color(1.0f, 1.0f, 1.0f, fmax(0.5f, 1.0f-m_age/m_lifespan));
+	gl::drawSolidCircle(m_loc, m_radius * fmax(0.5f, m_age/m_lifespan));
 	gl::color(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
@@ -71,7 +76,7 @@ void Particle::pullToCenter(const Vec2f &center)
 	
 	if (distToCenter > maxDistance)
 	{
-		static const float pullStrength = 0.0001f;
+		static const float pullStrength = 0.1f;
 		m_vel -= dirToCenter.normalized() * ((distToCenter - maxDistance) * pullStrength);
 	}
 }
