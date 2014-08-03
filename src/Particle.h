@@ -10,6 +10,7 @@
 #define __VoidNoise__Particle__
 
 #include <iostream>
+#include <deque>
 #include "cinder/gl/gl.h"
 
 using namespace ci;
@@ -39,6 +40,9 @@ private:
 	double m_age;
 	double m_lifespan;
 	bool m_isDead;
+	
+	std::deque<Vec2f> m_history;
+	int m_frameCtr;
 };
 
 #endif /* defined(__VoidNoise__Particle__) */

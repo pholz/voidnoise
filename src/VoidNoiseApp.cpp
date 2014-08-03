@@ -53,8 +53,8 @@ void VoidNoiseApp::setup()
 	voidnoise::Settings::get().maxSpeed = 20.0f;
 	voidnoise::Settings::get().minSpeed = 0.4f;
 	voidnoise::Settings::get().decay = 0.001f;
-	voidnoise::Settings::get().repulsionDist = 50.0f;
-	voidnoise::Settings::get().repulsionStrength = 0.01f;
+	voidnoise::Settings::get().repulsionDist = 200.0f;
+	voidnoise::Settings::get().repulsionStrength = 3000.0f;
 	
 	m_params = params::InterfaceGl::create(getWindow(), "Flocking", Vec2i(225, 300));
 	m_params->addParam("Scene Rotation", &m_sceneRotation);

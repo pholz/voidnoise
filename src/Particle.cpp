@@ -65,16 +65,43 @@ void Particle::update()
 	{
 		m_isDead = true;
 	}
+	
+	if (m_frameCtr > 20)
+	{
+		m_history.push_front(m_loc);
+		
+		if (m_history.size() > 10)
+		{
+			m_history.pop_back();
+		}
+		
+		m_frameCtr = 0;
+	}
+	
+	m_frameCtr++;
 }
 
 void Particle::draw()
 {
-	gl::color(1.0f, 1.0f, 1.0f, fmax(0.5f, 1.0f-m_age/m_lifespan));
+	gl::color(1.0f, 0.0f, 0.0f, 1.0f);
 	//gl::drawSolidCircle(m_loc, m_radius * fmax(0.5f, m_age/m_lifespan));
 	Vec2f rv = m_vel.normalized();
 	rv.rotate(M_PI_2);
-	gl::drawSolidTriangle(m_loc + m_vel.normalized() * m_radius * 2.0f,
-						  m_loc + rv * m_radius/2.0f, m_loc - rv * m_radius/2.0f);
+	//gl::drawSolidTriangle(m_loc + m_vel.normalized() * m_radius * 2.0f,
+	//					  m_loc + rv * m_radius/2.0f, m_loc - rv * m_radius/2.0f);
+	
+	gl::color(1.0, 1.0, 1.0, 1.0f);
+	gl::begin(GL_LINE_STRIP);
+	gl::vertex(m_loc);
+	int i = 0;
+	for (Vec2f &vec : m_history)
+	{
+		gl::color(1.0, 1.0, 1.0, (10.0-(i+m_frameCtr/20.0f))/10.0f);
+		gl::vertex(vec);
+		i++;
+	}
+	gl::end();
+	
 	gl::color(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
