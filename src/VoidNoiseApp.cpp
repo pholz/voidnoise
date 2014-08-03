@@ -11,12 +11,13 @@ using namespace std;
 class VoidNoiseApp : public AppNative {
   public:
 	void setup();
-	void mouseDown( MouseEvent event );	
+	void mouseDown( MouseEvent event );
+	void mouseUp( MouseEvent event );
+	void mouseDrag( MouseEvent event );
 	void update();
 	void draw();
-	
-	
-	CameraPersp m_cam;
+		
+	CameraOrtho m_cam;
 	Vec3f m_eye, m_center, m_up;
 	params::InterfaceGlRef m_params;
 	Quatf m_sceneRotation;
@@ -34,7 +35,9 @@ void VoidNoiseApp::setup()
 {
 	setFrameRate(30.0f);
 	
-	m_cam.setPerspective(60.0f, getWindowAspectRatio(), 5.0f, 3000.0f);
+//	m_cam.setPerspective(60.0f, getWindowAspectRatio(), 5.0f, 3000.0f);
+	static const float sz = REGIONSIZE;
+	m_cam.setOrtho(-sz, sz, -sz, sz, 5.0f, 3000.0f);
 	m_camDistance = 1000.0f;
 	m_center = Vec3f::zero();
 	m_up = Vec3f::yAxis();
@@ -50,6 +53,8 @@ void VoidNoiseApp::setup()
 	voidnoise::Settings::get().maxSpeed = 20.0f;
 	voidnoise::Settings::get().minSpeed = 0.4f;
 	voidnoise::Settings::get().decay = 0.001f;
+	voidnoise::Settings::get().repulsionDist = 50.0f;
+	voidnoise::Settings::get().repulsionStrength = 0.01f;
 	
 	m_params = params::InterfaceGl::create(getWindow(), "Flocking", Vec2i(225, 300));
 	m_params->addParam("Scene Rotation", &m_sceneRotation);
@@ -66,6 +71,8 @@ void VoidNoiseApp::setup()
 	m_params->addParam("gravity", &voidnoise::Settings::get().gravity);
 	m_params->addParam("gravity dist", &voidnoise::Settings::get().gravityDistance);
 	m_params->addParam("decay", &voidnoise::Settings::get().decay);
+	m_params->addParam("repuls dist", &voidnoise::Settings::get().repulsionDist);
+	m_params->addParam("repuls str", &voidnoise::Settings::get().repulsionStrength);
 	
 	m_particleSystem.addParticles(50);
 
@@ -73,6 +80,17 @@ void VoidNoiseApp::setup()
 
 void VoidNoiseApp::mouseDown( MouseEvent event )
 {
+	m_particleSystem.setRepulsionPos(true, event.getPos());
+}
+
+void VoidNoiseApp::mouseDrag( MouseEvent event )
+{
+	m_particleSystem.setRepulsionPos(true, event.getPos());
+}
+
+void VoidNoiseApp::mouseUp( MouseEvent event )
+{
+	m_particleSystem.setRepulsionPos(false);
 }
 
 void VoidNoiseApp::update()
@@ -81,6 +99,7 @@ void VoidNoiseApp::update()
 	
 	m_particleSystem.update();
 	m_particleSystem.applyForce(m_pSysZoneRadiusSq, m_pSysSeparationThresh, m_pSysAlignmentThresh);
+
 }
 
 void VoidNoiseApp::draw()
@@ -90,6 +109,7 @@ void VoidNoiseApp::draw()
 	// clear out the window with black
 	gl::clear( Color( 0, 0, 0 ) );
 	
+	m_cam.setEyePoint(m_eye);
 	m_cam.lookAt(m_eye, m_center, m_up);
 	gl::setMatrices(m_cam);
 	

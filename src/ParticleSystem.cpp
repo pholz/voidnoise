@@ -13,9 +13,21 @@
 
 using namespace ci;
 
-ParticleSystem::ParticleSystem()
+ParticleSystem::ParticleSystem() :
+	m_doRepulsion(false)
 {
 	
+}
+
+void ParticleSystem::setRepulsionPos(bool on, const Vec2i &pos)
+{
+	m_doRepulsion = on;
+	
+	if (on)
+	{
+		m_repulsionPos.x = (float(pos.x)/float(app::getWindowWidth()) - 0.5f) * REGIONSIZE * 2.0;
+		m_repulsionPos.y = -(float(pos.y)/float(app::getWindowHeight()) - 0.5f) * REGIONSIZE * 2.0;
+	}
 }
 
 void ParticleSystem::applyForce(float zoneRadiusSquared, float separationThresh, float alignmentThresh)
@@ -63,6 +75,16 @@ void ParticleSystem::applyForce(float zoneRadiusSquared, float separationThresh,
 					p2->addAcc(dir);
 				}
 				
+			}
+		}
+		
+		if (m_doRepulsion)
+		{
+			float dsqrd = p1->pos().distanceSquared(m_repulsionPos);
+			if (dsqrd < voidnoise::Settings::get().repulsionDist * voidnoise::Settings::get().repulsionDist)
+			{
+				p1->addAcc((p1->pos()-m_repulsionPos) * voidnoise::Settings::get().repulsionStrength
+						   * (1.0f/(dsqrd+0.1f)));
 			}
 		}
 	}

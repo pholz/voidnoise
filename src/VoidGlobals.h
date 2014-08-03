@@ -9,6 +9,8 @@
 #ifndef VoidNoise_VoidGlobals_h
 #define VoidNoise_VoidGlobals_h
 
+#define REGIONSIZE 600.0
+
 namespace voidnoise {
 	
 	class Settings {
@@ -29,6 +31,8 @@ namespace voidnoise {
 		float gravity;
 		float gravityDistance;
 		float decay;
+		float repulsionDist;
+		float repulsionStrength;
 		
 	private:
 		Settings() {}
