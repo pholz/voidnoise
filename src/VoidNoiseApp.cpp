@@ -55,6 +55,7 @@ void VoidNoiseApp::setup()
 	voidnoise::Settings::get().decay = 0.001f;
 	voidnoise::Settings::get().repulsionDist = 200.0f;
 	voidnoise::Settings::get().repulsionStrength = 3000.0f;
+	voidnoise::Settings::get().stemThickness = 1.0f;
 	
 	m_params = params::InterfaceGl::create(getWindow(), "Flocking", Vec2i(225, 300));
 	m_params->addParam("Scene Rotation", &m_sceneRotation);
@@ -73,6 +74,7 @@ void VoidNoiseApp::setup()
 	m_params->addParam("decay", &voidnoise::Settings::get().decay);
 	m_params->addParam("repuls dist", &voidnoise::Settings::get().repulsionDist);
 	m_params->addParam("repuls str", &voidnoise::Settings::get().repulsionStrength);
+	m_params->addParam("stem thickness", &voidnoise::Settings::get().stemThickness);
 	
 	m_particleSystem.addParticles(50);
 

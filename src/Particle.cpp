@@ -91,6 +91,8 @@ void Particle::draw()
 	//					  m_loc + rv * m_radius/2.0f, m_loc - rv * m_radius/2.0f);
 	
 	gl::color(1.0, 1.0, 1.0, 1.0f);
+	
+	gl::lineWidth(voidnoise::Settings::get().stemThickness);
 	gl::begin(GL_LINE_STRIP);
 	gl::vertex(m_loc);
 	int i = 0;

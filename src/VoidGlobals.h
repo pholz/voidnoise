@@ -34,6 +34,8 @@ namespace voidnoise {
 		float repulsionDist;
 		float repulsionStrength;
 		
+		float stemThickness;
+		
 	private:
 		Settings() {}
 		Settings(const Settings&) {}
