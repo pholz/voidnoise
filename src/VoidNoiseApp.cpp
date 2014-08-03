@@ -1,8 +1,10 @@
 #include "cinder/app/AppNative.h"
 #include "cinder/gl/gl.h"
+#include "cinder/gl/Fbo.h"
 #include "cinder/Camera.h"
 #include "cinder/params/Params.h"
 #include "ParticleSystem.h"
+#include "cinderSyphon.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -29,6 +31,12 @@ class VoidNoiseApp : public AppNative {
 	float m_pSysSeparationThresh;
 	float m_pSysAlignmentThresh;
 	
+	syphonServer m_srvSyphon;
+	gl::Fbo m_fbo;
+	gl::TextureRef m_syTex;
+	
+	bool m_doSyphon;
+	
 };
 
 void VoidNoiseApp::setup()
@@ -44,6 +52,7 @@ void VoidNoiseApp::setup()
 	m_pSysZoneRadiusSq = 7000.0;
 	m_pSysSeparationThresh = 0.2;
 	m_pSysAlignmentThresh = 0.7;
+	m_doSyphon = false;
 	
 	voidnoise::Settings::get().attractStrength = 0.1f;
 	voidnoise::Settings::get().repelStrength = 0.05f;
@@ -76,8 +85,15 @@ void VoidNoiseApp::setup()
 	m_params->addParam("repuls str", &voidnoise::Settings::get().repulsionStrength);
 	m_params->addParam("stem thickness", &voidnoise::Settings::get().stemThickness);
 	
-	m_particleSystem.addParticles(50);
-
+	m_params->addParam("syphon", &m_doSyphon);
+	
+	//m_particleSystem.addParticles(500);
+	
+	m_srvSyphon.setName("voidnoise");
+	
+	
+	m_fbo = gl::Fbo(REGIONSIZE, REGIONSIZE);
+	m_syTex = gl::Texture::create(REGIONSIZE, REGIONSIZE);
 }
 
 void VoidNoiseApp::mouseDown( MouseEvent event )
@@ -106,6 +122,13 @@ void VoidNoiseApp::update()
 
 void VoidNoiseApp::draw()
 {
+	bool syphon = m_doSyphon;
+	
+	if (syphon)
+	{
+		m_fbo.bindFramebuffer();
+	}
+	
 	gl::enableAlphaBlending();
 	
 	// clear out the window with black
@@ -118,6 +141,15 @@ void VoidNoiseApp::draw()
 	gl::rotate(m_sceneRotation);
 	
 	m_particleSystem.draw();
+	
+//	m_srvSyphon.publishScreen();
+	
+	if (syphon)
+	{
+		m_fbo.unbindFramebuffer();
+		*m_syTex = m_fbo.getTexture();
+		m_srvSyphon.publishTexture(m_syTex);
+	}
 	
 	m_params->draw();
 }

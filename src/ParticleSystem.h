@@ -9,7 +9,7 @@
 #ifndef __VoidNoise__ParticleSystem__
 #define __VoidNoise__ParticleSystem__
 
-#include <iostream>
+#include <vector>
 #include <list>
 #include "Particle.h"
 #include "VoidGlobals.h"
@@ -29,7 +29,7 @@ public:
 	void applyForce(float zoneRadiusSquared, float separationThresh, float alignmentThresh);
 	
 private:
-	std::list<Particle> m_particles;
+	std::vector<Particle> m_particles;
 	Vec2f m_repulsionPos;
 	bool m_doRepulsion;
 };

@@ -87,13 +87,15 @@ void ParticleSystem::applyForce(float zoneRadiusSquared, float separationThresh,
 						   * (1.0f/(dsqrd+0.1f)));
 			}
 		}
+		
+		
 	}
 	
 }
 
 void ParticleSystem::update()
 {
-	for (std::list<Particle>::iterator it = m_particles.begin(); it != m_particles.end(); )
+	for (std::vector<Particle>::iterator it = m_particles.begin(); it != m_particles.end(); )
 	{
 		if (it->isDead())
 		{
@@ -109,6 +111,16 @@ void ParticleSystem::update()
 	if (m_particles.size() < NUM_PARTICLES)
 	{
 		addParticles(NUM_PARTICLES - m_particles.size());
+		//int i = Rand::randInt(m_particles.size());
+		//m_particles.push_back(Particle(m_particles[i].pos()));
+
+	}
+	
+	if (Rand::randInt(1000) > 10)
+	{
+		int i = Rand::randInt(m_particles.size());
+		Vec2f pos = m_particles[i].pos();
+		m_particles.push_back(Particle(pos + Vec2f(20.0, 20.0)));
 	}
 }
 
