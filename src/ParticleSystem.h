@@ -12,6 +12,7 @@
 #include <iostream>
 #include <list>
 #include "Particle.h"
+#include "VoidGlobals.h"
 
 using namespace ci;
 

@@ -9,6 +9,8 @@
 #include "Particle.h"
 #include "cinder/Rand.h"
 
+#include "VoidGlobals.h"
+
 using namespace ci;
 using namespace ci::app;
 
@@ -19,9 +21,8 @@ Particle::Particle(const Vec2f& loc) :
 	m_loc = loc;
 	m_vel = Rand::randVec2f() * Rand::randFloat();
 	//m_vel = Rand::randFloat();
-	m_radius = 5.0f;
+	m_radius = 10.0f;
 	m_acc = Vec2f(0.0, 0.0);
-	m_decay = 0.7;
 }
 
 void Particle::addAcc(const Vec2f &acc)
@@ -37,22 +38,27 @@ bool Particle::isDead()
 
 void Particle::update()
 {
-
-	
-	pullToCenter(Vec2f(0.0, 0.0));
 	m_vel += m_acc;
 	
-	static const float maxSpeedSq = .7;
+	float maxSpeed = voidnoise::Settings::get().maxSpeed;
+	float maxSpeedSq = maxSpeed * maxSpeed;
+	float minSpeed = voidnoise::Settings::get().minSpeed;
+	float minSpeedSq = minSpeed * minSpeed;
 	float velLengthSqrd = m_vel.lengthSquared();
 	if( velLengthSqrd > maxSpeedSq) {
 		m_vel.normalize();
-		m_vel *= maxSpeedSq;
+		m_vel *= maxSpeed;
+	}
+	else if (velLengthSqrd < minSpeedSq) {
+		m_vel.normalize();
+		m_vel *= minSpeed;
 	}
 	
 	m_loc += m_vel;
-	m_vel *= m_decay;
+	m_vel *= voidnoise::Settings::get().decay;
+	m_acc *= voidnoise::Settings::get().decay;
 	
-
+	pullToCenter(Vec2f(0.0, 0.0));
 	
 	m_age += 1.0;
 	if (m_age >= m_lifespan)
@@ -64,7 +70,11 @@ void Particle::update()
 void Particle::draw()
 {
 	gl::color(1.0f, 1.0f, 1.0f, fmax(0.5f, 1.0f-m_age/m_lifespan));
-	gl::drawSolidCircle(m_loc, m_radius * fmax(0.5f, m_age/m_lifespan));
+	//gl::drawSolidCircle(m_loc, m_radius * fmax(0.5f, m_age/m_lifespan));
+	Vec2f rv = m_vel.normalized();
+	rv.rotate(M_PI_2);
+	gl::drawSolidTriangle(m_loc + m_vel.normalized() * m_radius * 2.0f,
+						  m_loc + rv * m_radius/2.0f, m_loc - rv * m_radius/2.0f);
 	gl::color(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
@@ -72,11 +82,10 @@ void Particle::pullToCenter(const Vec2f &center)
 {
 	Vec2f dirToCenter = m_loc - center;
 	float distToCenter = dirToCenter.length();
-	static const float maxDistance = 300.0f;
 	
-	if (distToCenter > maxDistance)
+	if (distToCenter > voidnoise::Settings::get().gravityDistance)
 	{
-		static const float pullStrength = 0.1f;
-		m_vel -= dirToCenter.normalized() * ((distToCenter - maxDistance) * pullStrength);
+		m_acc -= dirToCenter.normalized() *
+			((distToCenter - voidnoise::Settings::get().gravityDistance) * voidnoise::Settings::get().gravity);
 	}
 }

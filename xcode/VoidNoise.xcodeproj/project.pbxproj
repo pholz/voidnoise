@@ -56,6 +56,7 @@
 		5323E6B50EAFCA7E003A9687 /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = /System/Library/Frameworks/QTKit.framework; sourceTree = "<absolute>"; };
 		5F742D54B88047D68183C17A /* syphonClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = syphonClient.h; path = "../../cinder_dev/blocks/Cinder-Syphon/src/syphonClient.h"; sourceTree = "<group>"; };
 		648376330A24458F97CA66ED /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		668ECB63198E74E500357E50 /* VoidGlobals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VoidGlobals.h; path = ../src/VoidGlobals.h; sourceTree = "<group>"; };
 		66C5B759198AD1E5006F0193 /* Particle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Particle.cpp; path = ../src/Particle.cpp; sourceTree = "<group>"; };
 		66C5B75A198AD1E5006F0193 /* Particle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Particle.h; path = ../src/Particle.h; sourceTree = "<group>"; };
 		66C5B75F198AE1F4006F0193 /* ParticleSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ParticleSystem.cpp; path = ../src/ParticleSystem.cpp; sourceTree = "<group>"; };
@@ -170,6 +171,7 @@
 		29B97315FDCFA39411CA2CEA /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				668ECB63198E74E500357E50 /* VoidGlobals.h */,
 				9058AECAB9A843A194025497 /* Resources.h */,
 				FF57E592C33742628DD4E8F4 /* VoidNoise_Prefix.pch */,
 			);

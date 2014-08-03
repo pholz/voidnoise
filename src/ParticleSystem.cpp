@@ -9,7 +9,7 @@
 #include "ParticleSystem.h"
 #include "cinder/Rand.h"
 
-#define NUM_PARTICLES 1000
+#define NUM_PARTICLES 500
 
 using namespace ci;
 
@@ -40,7 +40,7 @@ void ParticleSystem::applyForce(float zoneRadiusSquared, float separationThresh,
 				
 				if (ratio < separationThresh) // separate
 				{
-					float F = (separationThresh / ratio - 1.0f) * 0.01f;
+					float F = (separationThresh / ratio - 1.0f) * voidnoise::Settings::get().repelStrength;
 					dir = dir.normalized() * F;
 					p1->addAcc(dir);
 					p2->addAcc(-dir);
@@ -49,7 +49,7 @@ void ParticleSystem::applyForce(float zoneRadiusSquared, float separationThresh,
 				{
 					float threshDelta = alignmentThresh - separationThresh;
 					float adjustedRatio = (ratio - separationThresh) / threshDelta;
-					float F = (0.5f - cos(adjustedRatio * M_PI * 2.0f) * 0.5f + 0.5f) * 0.03f;
+					float F = (0.5f - cos(adjustedRatio * M_PI * 2.0f) * 0.5f + 0.5f) * voidnoise::Settings::get().orientStrength;
 					p1->addAcc(p2->vel().normalized() * F);
 					p2->addAcc(p1->vel().normalized() * F);
 				}
@@ -57,7 +57,7 @@ void ParticleSystem::applyForce(float zoneRadiusSquared, float separationThresh,
 				{
 					float threshDelta = 1.0f - alignmentThresh;
 					float adjustedRatio = (ratio - alignmentThresh) / threshDelta;
-					float F = (1.0 - (cos(adjustedRatio * M_PI * 2.0f) * -0.5f + 0.5f)) * 0.01f;
+					float F = (0.5f - (cos(adjustedRatio * M_PI * 2.0f) * 0.5f + 0.5f)) * voidnoise::Settings::get().attractStrength;
 					dir = dir.normalized() * F;
 					p1->addAcc(-dir);
 					p2->addAcc(dir);
