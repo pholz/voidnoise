@@ -9,7 +9,7 @@
 #ifndef VoidNoise_VoidGlobals_h
 #define VoidNoise_VoidGlobals_h
 
-#define REGIONSIZE 600.0
+#define REGIONSIZE 1000.0
 
 namespace voidnoise {
 	

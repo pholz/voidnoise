@@ -41,6 +41,7 @@ class VoidNoiseApp : public AppNative {
 
 void VoidNoiseApp::setup()
 {
+	setWindowSize(1000, 1000);
 	setFrameRate(30.0f);
 	
 //	m_cam.setPerspective(60.0f, getWindowAspectRatio(), 5.0f, 3000.0f);
@@ -58,9 +59,9 @@ void VoidNoiseApp::setup()
 	voidnoise::Settings::get().repelStrength = 0.05f;
 	voidnoise::Settings::get().orientStrength = 0.1f;
 	voidnoise::Settings::get().gravity = 0.04f;
-	voidnoise::Settings::get().gravityDistance = 300.0f;
+	voidnoise::Settings::get().gravityDistance = 800.0f;
 	voidnoise::Settings::get().maxSpeed = 20.0f;
-	voidnoise::Settings::get().minSpeed = 0.4f;
+	voidnoise::Settings::get().minSpeed = 10.0f;
 	voidnoise::Settings::get().decay = 0.001f;
 	voidnoise::Settings::get().repulsionDist = 200.0f;
 	voidnoise::Settings::get().repulsionStrength = 3000.0f;
@@ -91,8 +92,16 @@ void VoidNoiseApp::setup()
 	
 	m_srvSyphon.setName("voidnoise");
 	
+	gl::Fbo::Format format2;
+	format2.enableDepthBuffer(true);
+	format2.enableColorBuffer(true);
+	format2.setMinFilter(GL_LINEAR_MIPMAP_LINEAR);
+	format2.setMagFilter(GL_LINEAR_MIPMAP_LINEAR);
+	format2.setWrap(GL_CLAMP, GL_CLAMP);
+	format2.setColorInternalFormat(GL_RGBA16F_ARB);
+	format2.setSamples(4);
 	
-	m_fbo = gl::Fbo(REGIONSIZE, REGIONSIZE);
+	m_fbo = gl::Fbo(REGIONSIZE, REGIONSIZE, format2);
 	m_syTex = gl::Texture::create(REGIONSIZE, REGIONSIZE);
 }
 
@@ -126,17 +135,22 @@ void VoidNoiseApp::draw()
 	
 	if (syphon)
 	{
+		gl::setMatricesWindow(m_fbo.getSize());
+		gl::setViewport(m_fbo.getBounds());
+		gl::translate(m_fbo.getWidth()/2, m_fbo.getHeight()/2);
+		gl::scale(0.5, 0.5);
 		m_fbo.bindFramebuffer();
 	}
-	
+	else
+	{
+		m_cam.setEyePoint(m_eye);
+		m_cam.lookAt(m_eye, m_center, m_up);
+		gl::setMatrices(m_cam);
+	}
 	gl::enableAlphaBlending();
 	
 	// clear out the window with black
 	gl::clear( Color( 0, 0, 0 ) );
-	
-	m_cam.setEyePoint(m_eye);
-	m_cam.lookAt(m_eye, m_center, m_up);
-	gl::setMatrices(m_cam);
 	
 	gl::rotate(m_sceneRotation);
 	
@@ -149,6 +163,7 @@ void VoidNoiseApp::draw()
 		m_fbo.unbindFramebuffer();
 		*m_syTex = m_fbo.getTexture();
 		m_srvSyphon.publishTexture(m_syTex);
+//		m_fbo.blitToScreen(m_fbo.getBounds(), getWindowBounds());
 	}
 	
 	m_params->draw();

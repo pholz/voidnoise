@@ -12,6 +12,7 @@
 #include <iostream>
 #include <deque>
 #include "cinder/gl/gl.h"
+#include "cinder/gl/Vbo.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -20,6 +21,7 @@ class Particle
 {
 public:
 	Particle(const Vec2f &loc);
+	virtual ~Particle();
 	void update();
 	void draw();
 	bool isDead();
@@ -43,6 +45,8 @@ private:
 	
 	std::deque<Vec2f> m_history;
 	int m_frameCtr;
+	
+	gl::VboMeshRef m_vboMesh;
 };
 
 #endif /* defined(__VoidNoise__Particle__) */

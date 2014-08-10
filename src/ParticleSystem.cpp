@@ -9,7 +9,7 @@
 #include "ParticleSystem.h"
 #include "cinder/Rand.h"
 
-#define NUM_PARTICLES 500
+#define NUM_PARTICLES 400
 
 using namespace ci;
 
@@ -116,12 +116,12 @@ void ParticleSystem::update()
 
 	}
 	
-	if (Rand::randInt(1000) > 10)
-	{
-		int i = Rand::randInt(m_particles.size());
-		Vec2f pos = m_particles[i].pos();
-		m_particles.push_back(Particle(pos + Vec2f(20.0, 20.0)));
-	}
+//	if (Rand::randInt(1000) > 10)
+//	{
+//		int i = Rand::randInt(m_particles.size());
+//		Vec2f pos = m_particles[i].pos();
+//		m_particles.push_back(Particle(pos + Vec2f(20.0, 20.0)));
+//	}
 }
 
 void ParticleSystem::draw()
